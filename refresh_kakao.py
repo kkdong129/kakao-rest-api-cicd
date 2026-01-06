@@ -6,6 +6,10 @@ client_id = os.environ.get('KAKAO_CLIENT_ID')
 client_secret = os.environ.get('KAKAO_CLIENT_SECRET')
 refresh_token = os.environ.get('KAKAO_REFRESH_TOKEN')
 
+print(f"id: {client_id[:2]}****")
+print(f"secret: {client_secret[:2]}****")
+print(f"token: {client_token[:2]}****")
+
 def send_kakao_message(access_token, is_success=True, error_msg=""):
     """나에게 카카오톡 메시지 보내기 (성공/실패 공용)"""
     url = "https://kapi.kakao.com/v2/api/talk/memo/default/send"
