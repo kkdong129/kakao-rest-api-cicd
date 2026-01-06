@@ -121,7 +121,7 @@ def refresh_access_token():
     if response.status_code == 200:
         new_access_token = result.get('access_token')
         print("새로운 액세스 토큰 발급 성공!")
-        print(f"new_access_token: {vnew_access_token[:5]}...{new_access_token[-5:]}")
+        print(f"new_access_token: {new_access_token[:5]}...{new_access_token[-5:]}")
         # 성공 메시지 전송
         send_kakao_feed_message(new_access_token, is_success=True) # 피드 템플릿
         # send_kakao_text_message(new_access_token, is_success=True) # 텍스트 템플릿
