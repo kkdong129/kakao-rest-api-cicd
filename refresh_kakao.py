@@ -1,5 +1,6 @@
 import requests
 import os
+import json
 
 # GitHub Secrets에서 정보 가져오기
 client_id = os.environ.get('KAKAO_CLIENT_ID')
