@@ -124,6 +124,8 @@ def refresh_access_token():
         new_access_token = result.get('access_token')
         remained_seconds = result.get('refresh_token_expires_in')
 
+        expires_msg = "확인 불가"
+
         # 리프레시 토큰 만료일 확인 로직
         if remained_seconds:
             # 초 단위를 '일' 단위로 환산
@@ -134,7 +136,6 @@ def refresh_access_token():
             if remained_days < 7:
                 print("경고: 리프레시 토큰 만료가 7일 미만입니다! 곧 업데이트가 필요합니다.")
 
-        expires_msg = remained_days
         print("새로운 액세스 토큰 발급 성공!")
         print(f"new_access_token: {new_access_token[:5]}...{new_access_token[-5:]}")
         # 성공 메시지 전송
