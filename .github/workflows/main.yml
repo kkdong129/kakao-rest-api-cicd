@@ -1,29 +1,34 @@
-name: Kakao Token Refresh
+name: Kakao Token Refresh       # 1. 워크플로우의 이름 (화면에 표시됨)
 
-# 실행 조건 설정
-on:
-  schedule:
-    - cron: '0 0 * * *'  # 매일 자정(UTC 기준)에 실행
-  workflow_dispatch:      # 수동으로도 버튼을 눌러 실행 가능하게 함
+on:                             # 2. 언제 실행할 것인가? (이벤트 정의)
+  schedule:                     #    - 정해진 스케줄에 따라
+    - cron: '30 0 * * *'
+  workflow_dispatch:            #    - 사용자가 직접 버튼을 눌러 실행할 수 있게 허용
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+# ============================================================================
+# [Cron 읽는 법] (UTC 기준)
+# 다섯 개의 숫자는 순서대로 다음을 의미합니다: 분(0-59) 시(0-23) 일(1-31) 월(1-12) 요일(0-6)
+# 깃허브 액션은 UTC(세계 협정시)를 기준으로 작동합니다. 한국 시간(KST)은 UTC보다 9시간이 빠릅니다.
+# ============================================================================
 
-    steps:
-    - name: 체크아웃 코드
+jobs:                           # 3. 무엇을 실행할 것인가?
+  build:                        #    - 'build'라는 이름의 작업을 정의
+    runs-on: ubuntu-latest      #    - 가상 환경으로 최신 우분투 리눅스를 사용
+
+    steps:                      # 4. 실행 단계 (순차적 실행)
+    - name: 체크아웃 코드          #    - 내 저장소의 코드를 가상 컴퓨터로 가져옴
       uses: actions/checkout@v3
 
-    - name: 파이썬 설치
+    - name: 파이썬 설치            #    - 파이썬 프로그램 설치
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
 
-    - name: 라이브러리 설치
+    - name: 라이브러리 설치        #    - 필요한 도구(requests) 설치
       run: pip install requests
 
-    - name: 토큰 갱신 스크립트 실행
-      env:
+    - name: 토큰 갱신 스크립트 실행  #    - 실제 파이썬 코드 실행
+      env:                     #    - 보안 정보를 환경 변수로 주입
         KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
         KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
         KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}
