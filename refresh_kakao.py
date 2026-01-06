@@ -38,6 +38,7 @@ def send_kakao_feed_message(access_token, is_success=True, error_msg=""):
         "Content-Type": "application/x-www-form-urlencoded"
     }
 
+    title = f"Github actions 작업 결과"
     description = "카카오 토큰 갱신이 정상적으로 완료되었습니다." if is_success else f"에러 발생: {error_msg}"
 
     # 피드(Feed) 템플릿 구조
