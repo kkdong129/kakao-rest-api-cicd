@@ -19,7 +19,7 @@ def refresh_access_token():
     response = requests.post(url, data=data)
     result = response.json()
 
-    if response.status_status == 200:
+    if response.status_code == 200:
         print("새로운 액세스 토큰 발급 성공!")
         print(f"Access Token: {result.get('access_token')}")
         # 실제 QA 업무라면 여기서 발급된 토큰을 DB에 저장하거나 알림을 보낼 수 있습니다.
