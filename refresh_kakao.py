@@ -10,7 +10,8 @@ def send_kakao_message(access_token, is_success=True, error_msg=""):
     """나에게 카카오톡 메시지 보내기 (성공/실패 공용)"""
     url = "https://kapi.kakao.com/v2/api/talk/memo/default/send"
     headers = {
-        "Authorization": f"Bearer {access_token}"
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/x-www-form-urlencoded"
     }
 
     # 상태에 따른 메시지 내용 분기
@@ -19,19 +20,19 @@ def send_kakao_message(access_token, is_success=True, error_msg=""):
     else:
         main_text = f"카카오 토큰 갱신 실패!\n사유: {error_msg}"
 
-    data = {
-        "template_object": str({
+    payload = {
+        "template_object": json.dumps({
             "object_type": "text",
-            "text": f"GitHub Action 결과: {main_text}",
+            "text": f" {main_text}",
             "link": {
-                "web_url": "https://github.com/kkdong129/kakao-rest-api-cicd/actions/workflows/main.yml",
-                "mobile_web_url": "https://github.com/kkdong129/kakao-rest-api-cicd/actions/workflows/main.yml"
+                "web_url": "https://github.com/kkdong129/kakao-rest-api-cicd/actions",
+                "mobile_web_url": "https://github.com/kkdong129/kakao-rest-api-cicd/actions"
             },
             "button_title": "결과 확인"
         })
     }
 
-    response = requests.post(url, headers=headers, data=data)
+    response = requests.post(url, headers=headers, data=payload)
     if response.status_code == 200:
         print(f"카톡 알림 전송 완료 ({'성공' if is_success else '실패'} 알림)")
     else:
