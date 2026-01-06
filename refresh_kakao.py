@@ -40,7 +40,7 @@ def send_kakao_feed_message(access_token, is_success=True, expires_msg="", error
     }
 
     title = f"Github actions 작업 결과"
-    description = "카카오 토큰 갱신이 정상적으로 완료되었습니다.\n리프레시 토큰 남은 유효기간(일): {expires_msg}" if is_success else f"에러 발생: {error_msg}"
+    description = f"카카오 토큰 갱신이 정상적으로 완료되었습니다.\n리프레시 토큰 남은 유효기간(일): {expires_msg}" if is_success else f"에러 발생: {error_msg}"
 
     # 피드(Feed) 템플릿 구조
     template_object = {
