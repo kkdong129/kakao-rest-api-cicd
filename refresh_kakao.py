@@ -13,7 +13,7 @@ raw_data = {
 debug_list = []
 for key, value in raw_data.items():
     if value:
-        # 앞 2자, 뒤 2자만 남기고 나머지는 *로 표시
+        # 앞, 뒤 5자만 남기고 나머지는 마스킹 처리
         masked_value = f"{value[:5]}...{value[-5:]}"
         debug_list.append(f"{key}: {masked_value}")
     else:
@@ -38,7 +38,6 @@ def send_kakao_feed_message(access_token, is_success=True, error_msg=""):
         "Content-Type": "application/x-www-form-urlencoded"
     }
 
-    title = f"{status_icon} CI/CD 작업 리포트"
     description = "카카오 토큰 갱신이 정상적으로 완료되었습니다." if is_success else f"에러 발생: {error_msg}"
 
     # 피드(Feed) 템플릿 구조
@@ -122,7 +121,7 @@ def refresh_access_token():
     if response.status_code == 200:
         new_access_token = result.get('access_token')
         print("새로운 액세스 토큰 발급 성공!")
-        print(f"new_access_token: {new_access_token[:5]}****")
+        print(f"new_access_token: {vnew_access_token[:5]}...{new_access_token[-5:]}")
         # 성공 메시지 전송
         send_kakao_feed_message(new_access_token, is_success=True) # 피드 템플릿
         # send_kakao_text_message(new_access_token, is_success=True) # 텍스트 템플릿
