@@ -6,16 +6,23 @@ client_id = os.environ.get('KAKAO_CLIENT_ID')
 client_secret = os.environ.get('KAKAO_CLIENT_SECRET')
 refresh_token = os.environ.get('KAKAO_REFRESH_TOKEN')
 
-def send_kakao_message(access_token):
-    """나에게 카카오톡 메시지 보내기"""
+def send_kakao_message(access_token, is_success=True, error_msg=""):
+    """나에게 카카오톡 메시지 보내기 (성공/실패 공용)"""
     url = "https://kapi.kakao.com/v2/api/talk/memo/default/send"
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
+
+    # 상태에 따른 메시지 내용 분기
+    if is_success:
+        main_text = "카카오 토큰 갱신 성공!"
+    else:
+        main_text = f"카카오 토큰 갱신 실패!\n사유: {error_msg}"
+
     data = {
         "template_object": str({
             "object_type": "text",
-            "text": "✅ GitHub Action 결과: 카카오 토큰 갱신 성공!",
+            "text": f"GitHub Action 결과: {main_text}",
             "link": {
                 "web_url": "https://github.com/kkdong129/kakao-rest-api-cicd/actions/workflows/main.yml",
                 "mobile_web_url": "https://github.com/kkdong129/kakao-rest-api-cicd/actions/workflows/main.yml"
@@ -23,6 +30,12 @@ def send_kakao_message(access_token):
             "button_title": "결과 확인"
         })
     }
+
+    response = requests.post(url, headers=headers, data=data)
+    if response.status_code == 200:
+        print(f"카톡 알림 전송 완료 ({'성공' if is_success else '실패'} 알림)")
+    else:
+        print(f"카톡 알림 전송 실패: {response.json()}")
 
     response = requests.post(url, headers=headers, data=data)
     if response.status_code == 200:
@@ -43,12 +56,13 @@ def refresh_access_token():
     result = response.json()
 
     if response.status_code == 200:
+        new_access_token = result.get('access_token')
         print("새로운 액세스 토큰 발급 성공!")
-        print(f"Access Token: {result.get('access_token')}")
-        # 실제 QA 업무라면 여기서 발급된 토큰을 DB에 저장하거나 알림을 보낼 수 있습니다.
+        # 성공 메시지 전송
+        send_kakao_message(new_access_token, is_success=True)
     else:
-        print(f"실패 원인: {result}")
-
+        error_info = result.get('error_description', 'Unknown Error')
+        print(f"토큰 갱신 실패: {error_info}")
 
 if __name__ == "__main__":
     refresh_access_token()
