@@ -85,9 +85,9 @@ def send_kakao_text_message(access_token, is_success=True, error_msg=""):
 
     # 상태에 따른 메시지 내용 분기
     if is_success:
-        main_text = "카카오 토큰 갱신 성공!"
+        main_text = "Github actions 작업 결과: 카카오 토큰 갱신이 정상적으로 완료되었습니다."
     else:
-        main_text = f"카카오 토큰 갱신 실패!\n사유: {error_msg}"
+        main_text = f"Github actions 작업 결과: 에러 발생\n사유: {error_msg}"
 
     payload = {
         "template_object": json.dumps({
@@ -124,8 +124,8 @@ def refresh_access_token():
         print("새로운 액세스 토큰 발급 성공!")
         print(f"new_access_token: {new_access_token[:5]}...{new_access_token[-5:]}")
         # 성공 메시지 전송
-        send_kakao_feed_message(new_access_token, is_success=True) # 피드 템플릿
-        # send_kakao_text_message(new_access_token, is_success=True) # 텍스트 템플릿
+        # send_kakao_feed_message(new_access_token, is_success=True) # 피드 템플릿
+        send_kakao_text_message(new_access_token, is_success=True) # 텍스트 템플릿
     else:
         error_info = result.get('error_description', 'Unknown Error')
         print(f"토큰 갱신 실패: {error_info}")
