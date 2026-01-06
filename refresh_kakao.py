@@ -6,6 +6,29 @@ client_id = os.environ.get('KAKAO_CLIENT_ID')
 client_secret = os.environ.get('KAKAO_CLIENT_SECRET')
 refresh_token = os.environ.get('KAKAO_REFRESH_TOKEN')
 
+def send_kakao_message(access_token):
+    """나에게 카카오톡 메시지 보내기"""
+    url = "https://kapi.kakao.com/v2/api/talk/memo/default/send"
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+    data = {
+        "template_object": str({
+            "object_type": "text",
+            "text": "✅ GitHub Action 결과: 카카오 토큰 갱신 성공!",
+            "link": {
+                "web_url": "https://github.com/kkdong129/kakao-rest-api-cicd/actions/workflows/main.yml",
+                "mobile_web_url": "https://github.com/kkdong129/kakao-rest-api-cicd/actions/workflows/main.yml"
+            },
+            "button_title": "결과 확인"
+        })
+    }
+
+    response = requests.post(url, headers=headers, data=data)
+    if response.status_code == 200:
+        print("카톡 메시지 전송 성공!")
+    else:
+        print(f"메시지 전송 실패: {response.json()}")
 
 def refresh_access_token():
     url = "https://kauth.kakao.com/oauth/token"
