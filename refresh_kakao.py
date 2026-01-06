@@ -128,7 +128,8 @@ def refresh_access_token():
         if remained_seconds:
             # 초 단위를 '일' 단위로 환산
             remained_days = remained_seconds / (60 * 60 * 24)
-            print(f"알림: 리프레시 토큰의 유효기간이 약 {remained_days:.1f}일 남았습니다.")
+            expires_msg = f"{remained_days:.1f}"
+            print(f"알림: 리프레시 토큰의 유효기간이 약 {expires_msg}일 남았습니다.")
 
             if remained_days < 7:
                 print("경고: 리프레시 토큰 만료가 7일 미만입니다! 곧 업데이트가 필요합니다.")
@@ -137,8 +138,8 @@ def refresh_access_token():
         print("새로운 액세스 토큰 발급 성공!")
         print(f"new_access_token: {new_access_token[:5]}...{new_access_token[-5:]}")
         # 성공 메시지 전송
-        # send_kakao_feed_message(new_access_token, is_success=True, expires_msg) # 피드 템플릿
-        send_kakao_text_message(new_access_token, is_success=True, expires_msg) # 텍스트 템플릿
+        # send_kakao_feed_message(new_access_token, is_success=True, expires_msg=expires_msg) # 피드 템플릿
+        send_kakao_text_message(new_access_token, is_success=True, expires_msg=expires_msg) # 텍스트 템플릿
     else:
         error_info = result.get('error_description', 'Unknown Error')
         print(f"토큰 갱신 실패: {error_info}")
