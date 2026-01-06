@@ -1,0 +1,30 @@
+name: Kakao Token Refresh
+
+# 실행 조건 설정
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 매일 자정(UTC 기준)에 실행
+  workflow_dispatch:      # 수동으로도 버튼을 눌러 실행 가능하게 함
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 체크아웃 코드
+      uses: actions/checkout@v3
+
+    - name: 파이썬 설치
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: 라이브러리 설치
+      run: pip install requests
+
+    - name: 토큰 갱신 스크립트 실행
+      env:
+        KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
+        KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+        KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}
+      run: python refresh_kakao.py
