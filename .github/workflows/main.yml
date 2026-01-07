@@ -2,7 +2,7 @@ name: Kakao Token Refresh       # 1. 워크플로우의 이름 (화면에 표시
 
 on:                             # 2. 언제 실행할 것인가? (이벤트 정의)
   schedule:                     #    - 정해진 스케줄에 따라
-    - cron: '0 2 * * *'
+    - cron: '*/10 * * * *'
   workflow_dispatch:            #    - 사용자가 직접 버튼을 눌러 실행할 수 있게 허용
 
 # ============================================================================
@@ -16,6 +16,12 @@ jobs:                           # 3. 무엇을 실행할 것인가?
     runs-on: ubuntu-latest      #    - 가상 환경으로 최신 우분투 리눅스를 사용
 
     steps:                      # 4. 실행 단계 (순차적 실행)
+    - name: 실행시간 표시
+      run: |
+        echo "Current Time"
+        echo "UTC   : $(date +"%Y-%m-%dT%H:%M:%SZ")"
+        echo "SEOUL : $(TZ=Asia/Seoul date +"%Y-%m-%dT%H:%M:%SZ")"
+          
     - name: 체크아웃 코드          #    - 내 저장소의 코드를 가상 컴퓨터로 가져옴
       uses: actions/checkout@v3
 
