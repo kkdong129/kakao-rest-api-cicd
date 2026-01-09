@@ -47,7 +47,7 @@ def send_slack_message(is_success=True, expires_msg="", error_msg=""):
     if is_success:
         content = (
             f"• *결과*: 카카오 토큰 갱신 성공\n"
-            f"• *리프레시 토큰 잔여 기간*: {expires_msg}일\n"
+            f"• *리프레시 토큰 잔여 기간(일)*: {expires_msg}\n"
             f"• *실행 시각*: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         )
         color = "#36a64f"  # 초록색
@@ -74,7 +74,7 @@ def send_slack_message(is_success=True, expires_msg="", error_msg=""):
                         "elements": [
                             {
                                 "type": "button",
-                                "text": {"type": "plain_text", "text": "GitHub 결과 확인"},
+                                "text": {"type": "plain_text", "text": "Actions 결과 확인"},
                                 "url": "https://github.com/kkdong129/kakao-rest-api-cicd/actions"
                             }
                         ]
