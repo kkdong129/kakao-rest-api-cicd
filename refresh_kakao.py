@@ -7,7 +7,8 @@ import datetime
 raw_data = {
     "CLIENT_ID": os.environ.get('KAKAO_CLIENT_ID', ''),
     "CLIENT_SECRET": os.environ.get('KAKAO_CLIENT_SECRET', ''),
-    "REFRESH_TOKEN": os.environ.get('KAKAO_REFRESH_TOKEN', '')
+    "REFRESH_TOKEN": os.environ.get('KAKAO_REFRESH_TOKEN', ''),
+    "SLACK_WEBHOOK_URL": os.environ.get('SLACK_WEBHOOK_URL', '')
 }
 
 # 2. 디버그용 리스트 생성 (보안을 위해 마스킹 처리)
@@ -30,6 +31,64 @@ print("-----------------------------------------------")
 client_id = raw_data["CLIENT_ID"]
 client_secret = raw_data["CLIENT_SECRET"]
 refresh_token = raw_data["REFRESH_TOKEN"]
+slack_webhook_url = raw_data["SLACK_WEBHOOK_URL"]
+
+
+def send_slack_message(is_success=True, expires_msg="", error_msg=""):
+    """슬랙으로 알림 보내기"""
+    if not slack_webhook_url:
+        print("슬랙 웹훅 URL이 설정되지 않았습니다.")
+        return
+
+    # 메시지 디자인 구성
+    status_icon = "✅" if is_success else "🚨"
+    title = f"*{status_icon} GitHub Actions: Kakao Token Refresh*"
+
+    if is_success:
+        content = (
+            f"• *결과*: 카카오 토큰 갱신 성공\n"
+            f"• *리프레시 토큰 잔여 기간*: {expires_msg}일\n"
+            f"• *실행 시각*: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        )
+        color = "#36a64f"  # 초록색
+    else:
+        content = f"• *결과*: 실패\n• *사유*: {error_msg}"
+        color = "#ff0000"  # 빨간색
+
+    # 슬랙 메시지 구조 (Block Kit 형태)
+    payload = {
+        "attachments": [
+            {
+                "color": color,
+                "blocks": [
+                    {
+                        "type": "section",
+                        "text": {"type": "mrkdwn", "text": title}
+                    },
+                    {
+                        "type": "section",
+                        "text": {"type": "mrkdwn", "text": content}
+                    },
+                    {
+                        "type": "actions",
+                        "elements": [
+                            {
+                                "type": "button",
+                                "text": {"type": "plain_text", "text": "GitHub 결과 확인"},
+                                "url": "https://github.com/kkdong129/kakao-rest-api-cicd/actions"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+
+    response = requests.post(slack_webhook_url, json=payload)
+    if response.status_code == 200:
+        print("슬랙 알림 전송 성공")
+    else:
+        print(f"슬랙 알림 전송 실패! {response.status_code}")
 
 def send_kakao_feed_message(access_token, is_success=True, expires_msg="", error_msg=""):
     """나에게 카카오톡 메시지 보내기 (피드 템플릿 사용)"""
@@ -141,10 +200,12 @@ def refresh_access_token():
         print(f"new_access_token: {new_access_token[:5]}...{new_access_token[-5:]}")
         # 성공 메시지 전송
         # send_kakao_feed_message(new_access_token, is_success=True, expires_msg=expires_msg) # 피드 템플릿
-        send_kakao_text_message(new_access_token, is_success=True, expires_msg=expires_msg) # 텍스트 템플릿
+        # send_kakao_text_message(new_access_token, is_success=True, expires_msg=expires_msg) # 텍스트 템플릿
+        send_slack_message(is_success=True, expires_msg=expires_msg)
     else:
         error_info = result.get('error_description', 'Unknown Error')
         print(f"토큰 갱신 실패: {error_info}")
+        send_slack_message(is_success=False, error_msg=error_info)
 
 if __name__ == "__main__":
     refresh_access_token()
